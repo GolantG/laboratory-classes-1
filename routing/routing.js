@@ -14,3 +14,27 @@
 //  };
 
 // 🔧 Wyeksportuj funkcję 'requestRouting', aby inne moduł mogły jej używać.
+
+const homeRouting = require('./home');
+const productRouting = require('./product');
+const logoutRouting = require('./logout');
+const STATUS_CODE = require('../constants/statusCode');
+
+const requestRouting = (req, res) => {
+    console.log(`INFO [${new Date()}]: ${req.method} - ${req.url}`);
+    if (req.url === '/') {
+        homeRouting(req, res);
+    } else if (req.url.startsWith('/product')) {
+        productRouting(req, res);
+    } else if (req.url === '/logout') {
+        logoutRouting(req, res);
+    } else if (req.url === '/kill') {
+        console.log(`PROCESS [${new Date()}]: logout has been initiated and the application will be closed.`);
+        process.exit();
+    } else {
+        console.error(`ERROR [${new Date()}]: requested url ${req.url} doesn’t exist.`);
+        res.writeHead(STATUS_CODE.NOT_FOUND);
+        res.end('<h1>404 Not Found</h1>');
+    }
+};
+module.exports = requestRouting;
